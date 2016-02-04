@@ -1,0 +1,25 @@
+group 'net.devneko'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-4589"
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4589"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-4589"
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
