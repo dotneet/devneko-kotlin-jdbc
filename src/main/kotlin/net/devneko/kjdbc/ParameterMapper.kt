@@ -50,7 +50,7 @@ class ParameterMapper
         preparedStatement.setAsciiStream(getIndex(name), value)
     }
 
-    fun setAscieeStream(name:String, value: InputStream, length:Int) {
+    fun setAsciiStream(name:String, value: InputStream, length:Int) {
         preparedStatement.setAsciiStream(getIndex(name), value, length)
     }
 

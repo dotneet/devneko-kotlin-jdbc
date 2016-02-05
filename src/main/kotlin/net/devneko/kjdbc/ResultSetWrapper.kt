@@ -1,5 +1,6 @@
 package net.devneko.kjdbc
 
+import java.io.Closeable
 import java.lang.reflect.Type
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -11,16 +12,28 @@ import kotlin.reflect.jvm.javaType
 class ResultSetWrapper(
         private val statement: Statement,
         private val resultSet: ResultSet
-) : ResultSet by resultSet
+) : ResultSet by resultSet, Closeable
 {
     fun <T:Any> forEach(clazz:KClass<T>, callback:(T)->Unit) {
-        while ( this.next() ) {
-            val obj:T = read(clazz)
-            callback.invoke(obj)
+        use {
+            while ( this.next() ) {
+                val obj:T = read(clazz)
+                callback.invoke(obj)
+            }
         }
     }
 
-    inline fun <reified T:Any> read():T {
+    inline fun <reified T:Any> readOne():T {
+        readOneOrNull<T>()?.let {
+            return it
+        }
+        throw SQLException("record is not found.")
+    }
+
+    inline fun <reified T:Any> readOneOrNull():T? {
+        if ( this.isClosed() || !this.next() ) {
+            return null
+        }
         val clazz = T::class
         return read(clazz)
     }
