@@ -17,7 +17,7 @@ open class UpdateParameterBuilder {
 
 
 
-    fun parameterMapper():ParameterMapper.()->Unit {
+    fun parameterMapper(): ParameterMapper.()->Unit {
         return {
            _setList.forEach { it(this) }
         }

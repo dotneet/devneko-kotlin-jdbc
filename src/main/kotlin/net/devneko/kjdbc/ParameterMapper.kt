@@ -5,13 +5,14 @@ import java.io.Reader
 import java.math.BigDecimal
 import java.net.URL
 import java.sql.*
+import java.sql.Array
 import java.sql.Date
 import java.util.*
 
 class ParameterMapper
 (
         private val nameIndex:Map<String,Int>,
-        private val preparedStatement:PreparedStatement
+        private val preparedStatement: PreparedStatement
 )
 {
     fun set(name:String, value:Int) {
@@ -42,7 +43,7 @@ class ParameterMapper
         preparedStatement.setBoolean(getIndex(name), value)
     }
 
-    fun set(name:String, value:java.sql.Array) {
+    fun set(name:String, value: Array) {
         preparedStatement.setArray(getIndex(name), value)
     }
 
@@ -101,14 +102,14 @@ class ParameterMapper
     fun setClob(name:String, value: Reader, length:Long) {
         preparedStatement.setClob(getIndex(name), value, length)
     }
-    fun set(name:String, value: java.sql.Date) {
+    fun set(name:String, value: Date) {
         preparedStatement.setDate(getIndex(name), value)
     }
-    fun set(name:String, value: java.sql.Date, cal:Calendar) {
+    fun set(name:String, value: Date, cal: Calendar) {
         preparedStatement.setDate(getIndex(name), value, cal)
     }
     fun set(name:String, value: java.util.Date) {
-        val date = java.sql.Date(value.time)
+        val date = Date(value.time)
         preparedStatement.setDate(getIndex(name), date)
     }
     fun set(name:String, value: Double) {
@@ -144,52 +145,52 @@ class ParameterMapper
     fun setObject(name:String, value:Any, sqlType:Int) {
         preparedStatement.setObject(getIndex(name), value, sqlType)
     }
-    fun setObject(name:String, value:Any, sqlType:SQLType) {
+    fun setObject(name:String, value:Any, sqlType: SQLType) {
         preparedStatement.setObject(getIndex(name), value, sqlType)
     }
-    fun setObject(name:String, value:Any, sqlType:SQLType, scale:Int) {
+    fun setObject(name:String, value:Any, sqlType: SQLType, scale:Int) {
         preparedStatement.setObject(getIndex(name), value, sqlType, scale)
     }
     fun setObject(name:String, value:Any, sqlType:Int, scale:Int) {
         preparedStatement.setObject(getIndex(name), value, sqlType, scale)
     }
-    fun set(name:String, value:Ref) {
+    fun set(name:String, value: Ref) {
         preparedStatement.setRef(getIndex(name), value)
     }
-    fun set(name:String, value:RowId) {
+    fun set(name:String, value: RowId) {
         preparedStatement.setRowId(getIndex(name), value)
     }
     fun set(name:String, value:()->ByteArray) {
         preparedStatement.setRowId(getIndex(name), value)
     }
-    fun set(name:String, value:Time) {
+    fun set(name:String, value: Time) {
         preparedStatement.setTime(getIndex(name), value)
     }
-    fun setTime(name:String, value:Date) {
+    fun setTime(name:String, value: Date) {
         val time = Time(value.time)
         preparedStatement.setTime(getIndex(name), time)
     }
-    fun setTime(name:String, value:Time) {
+    fun setTime(name:String, value: Time) {
         preparedStatement.setTime(getIndex(name), value)
     }
-    fun set(name:String, value:Timestamp) {
+    fun set(name:String, value: Timestamp) {
         preparedStatement.setTimestamp(getIndex(name), value)
     }
-    fun set(name:String, value:Timestamp, cal:Calendar) {
+    fun set(name:String, value: Timestamp, cal: Calendar) {
         preparedStatement.setTimestamp(getIndex(name), value, cal)
     }
-    fun setTimestamp(name:String, value:java.util.Date) {
+    fun setTimestamp(name:String, value: java.util.Date) {
         val t = Timestamp(value.time)
         preparedStatement.setTimestamp(getIndex(name), t)
     }
-    fun setTimestamp(name:String, value:java.util.Date, cal:Calendar) {
+    fun setTimestamp(name:String, value: java.util.Date, cal: Calendar) {
         val t = Timestamp(value.time)
         preparedStatement.setTimestamp(getIndex(name), t, cal)
     }
-    fun setTimestamp(name:String, value:Timestamp) {
+    fun setTimestamp(name:String, value: Timestamp) {
         preparedStatement.setTimestamp(getIndex(name), value)
     }
-    fun setTimestamp(name:String, value:Timestamp, cal:Calendar) {
+    fun setTimestamp(name:String, value: Timestamp, cal: Calendar) {
         preparedStatement.setTimestamp(getIndex(name), value, cal)
     }
     fun set(name:String, value: URL) {

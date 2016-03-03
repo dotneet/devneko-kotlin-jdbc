@@ -1,4 +1,4 @@
-package com.kotring.repository
+package net.devneko.kjdbc
 
 import net.devneko.kjdbc.*
 import java.sql.Connection
@@ -43,12 +43,12 @@ open class SqlHelper
         return updateSql(sql, builder.parameterMapper())
     }
 
-    fun delete(tableName:String, condition:String, block:ParameterMapper.()->Unit):Int {
+    fun delete(tableName:String, condition:String, block: ParameterMapper.()->Unit):Int {
         val sql = "DELETE FROM $tableName WHERE $condition";
         return updateSql(sql, block)
     }
 
-    fun updateSql(sql:String, block:ParameterMapper.()->Unit):Int {
+    fun updateSql(sql:String, block: ParameterMapper.()->Unit):Int {
         val analyzeResult = SqlAnalyzer.analyze(sql)
         val ps = connection.prepareStatement(analyzeResult.sql)
         val mapper = ParameterMapper(analyzeResult.nameIndex, ps)

@@ -5,6 +5,7 @@ import java.lang.reflect.Type
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.javaType
@@ -14,7 +15,7 @@ class ResultSetWrapper(
         private val resultSet: ResultSet
 ) : ResultSet by resultSet, Closeable
 {
-    fun <T:Any> forEach(clazz:KClass<T>, callback:(T)->Unit) {
+    fun <T:Any> forEach(clazz: KClass<T>, callback:(T)->Unit) {
         use {
             while ( this.next() ) {
                 val obj:T = read(clazz)
@@ -38,7 +39,7 @@ class ResultSetWrapper(
         return read(clazz)
     }
 
-    fun <T:Any> read(clazz:KClass<T>):T {
+    fun <T:Any> read(clazz: KClass<T>):T {
         val constructor = clazz.constructors.singleOrNull()
         constructor ?: throw SQLException("constructor is not found.")
 
@@ -78,7 +79,7 @@ class ResultSetWrapper(
             "kotlin.ByteArray" -> this.getBytes(name)
             "java.net.URL" -> this.getURL(name)
             "java.math.BigDecimal" -> return this.getBigDecimal(name)
-            "java.util.Date" -> return java.util.Date(this.getDate(name).time)
+            "java.util.Date" -> return Date(this.getDate(name).time)
             "java.sql.Blob" -> this.getBlob(name)
             "java.sql.Clob" -> this.getClob(name)
         }
