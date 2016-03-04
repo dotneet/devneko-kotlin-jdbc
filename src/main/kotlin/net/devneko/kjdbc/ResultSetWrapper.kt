@@ -24,11 +24,11 @@ class ResultSetWrapper(
         }
     }
 
-    fun <T:Any> readAll(clazz: KClass<T>):List<T> {
+    inline fun <reified T:Any> readAll():List<T> {
         val result = arrayListOf<T>()
         use {
             while ( this.next() ) {
-                result.add(read(clazz))
+                result.add(read(T::class))
             }
         }
         return result
