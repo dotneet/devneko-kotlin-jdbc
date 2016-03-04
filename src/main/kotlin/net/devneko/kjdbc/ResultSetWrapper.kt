@@ -70,11 +70,10 @@ class ResultSetWrapper(
         return constructor.callBy(values)
     }
 
-    inline fun <reified T:Any> get(name:String):T? {
+    inline fun <reified T:Any> get(name:String):T {
         val type = fullType<T>()
-        return getByType(name,type.type) as T?
+        return getByType(name,type.type) as T
     }
-
 
     fun getByType(name:String, type: Type):Any {
         when ( type.typeName ) {
