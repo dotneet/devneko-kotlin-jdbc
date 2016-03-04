@@ -24,6 +24,16 @@ class ResultSetWrapper(
         }
     }
 
+    fun <T:Any> readAll(clazz: KClass<T>):List<T> {
+        val result = arrayListOf<T>()
+        use {
+            while ( this.next() ) {
+                result.add(read(clazz))
+            }
+        }
+        return result
+    }
+
     inline fun <reified T:Any> readOne():T {
         readOneOrNull<T>()?.let {
             return it
