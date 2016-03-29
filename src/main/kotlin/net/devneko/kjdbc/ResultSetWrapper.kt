@@ -53,7 +53,7 @@ class ResultSetWrapper(
         val constructor = clazz.constructors.singleOrNull()
         constructor ?: throw SQLException("constructor is not found.")
 
-        val values = hashMapOf<KParameter, Any>();
+        val values = hashMapOf<KParameter, Any?>();
         IntRange(1, this.metaData.columnCount).forEach {
             val columnName = this.metaData.getColumnName(it)
             val camelCaseName = underscoreSeparatedStringToCamelCase(columnName)
@@ -75,7 +75,7 @@ class ResultSetWrapper(
         return getByType(name,type.type) as T
     }
 
-    fun getByType(name:String, type: Type):Any {
+    fun getByType(name:String, type: Type):Any? {
         when ( type.typeName ) {
             "java.lang.Long" -> return this.getLong(name)
             "java.lang.Integer" -> return this.getInt(name)

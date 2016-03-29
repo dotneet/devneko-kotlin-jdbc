@@ -2,10 +2,11 @@ package net.devneko.kjdbc
 
 import net.devneko.kjdbc.*
 import java.sql.Connection
+import java.sql.PreparedStatement
 
 open class SqlHelper
 (
-        private val connection:Connection
+        val connection:Connection
 )
 {
     fun query(sql:String,block: (ParameterMapper.()->Unit)? = null): ResultSetWrapper {
@@ -48,12 +49,17 @@ open class SqlHelper
         return updateSql(sql, block)
     }
 
-    fun updateSql(sql:String, block: ParameterMapper.()->Unit):Int {
+    fun prepare(sql:String, block: ParameterMapper.()->Unit):PreparedStatement {
         val analyzeResult = SqlAnalyzer.analyze(sql)
         val ps = connection.prepareStatement(analyzeResult.sql)
         val mapper = ParameterMapper(analyzeResult.nameIndex, ps)
+        mapper.block()
+        return ps
+    }
+
+    fun updateSql(sql:String, block: ParameterMapper.()->Unit):Int {
+        val ps = prepare(sql, block)
         try {
-            mapper.block()
             return ps.executeUpdate()
         } finally {
             ps.close()
