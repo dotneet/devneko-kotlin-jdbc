@@ -5,6 +5,9 @@ import java.lang.reflect.Type
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -89,6 +92,14 @@ class ResultSetWrapper(
             "java.net.URL" -> this.getURL(name)
             "java.math.BigDecimal" -> return this.getBigDecimal(name)
             "java.util.Date" -> return Date(this.getDate(name).time)
+            "java.time.ZonedDateTime" -> {
+                val ts = this.getTimestamp(name)
+                return ts.toInstant().atZone(ZoneId.systemDefault())
+            }
+            "java.time.LocalDateTime" -> {
+                val ts = this.getTimestamp(name)
+                return ts.toLocalDateTime().atZone(ZoneId.systemDefault()).toLocalDateTime()
+            }
             "java.sql.Blob" -> this.getBlob(name)
             "java.sql.Clob" -> this.getClob(name)
         }

@@ -6,6 +6,10 @@ import java.math.BigDecimal
 import java.net.URL
 import java.sql.*
 import java.sql.Date
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
 open class UpdateParameterBuilder {
@@ -216,6 +220,10 @@ open class UpdateParameterBuilder {
         _nameList.add(name)
         _setList.add({ m -> m.setTime(name, value) })
     }
+    fun setTime(name:String, value:java.util.Date) {
+        _nameList.add(name)
+        _setList.add({ m -> m.setTime(name, java.sql.Date(value.time)) })
+    }
     fun setTime(name:String, value:Time) {
         _nameList.add(name)
         _setList.add({ m -> m.setTime(name, value) })
@@ -223,6 +231,12 @@ open class UpdateParameterBuilder {
     fun set(name:String, value:Timestamp) {
         _nameList.add(name)
         _setList.add({ m -> m.set(name, value) })
+    }
+    fun set(name:String, value:LocalDateTime) {
+        setTimestamp(name, value)
+    }
+    fun set(name:String, value:ZonedDateTime) {
+        setTimestamp(name, value)
     }
     fun set(name:String, value:Timestamp, cal:Calendar) {
         _nameList.add(name)
@@ -235,6 +249,19 @@ open class UpdateParameterBuilder {
     fun setTimestamp(name:String, value:java.util.Date, cal:Calendar) {
         _nameList.add(name)
         _setList.add({ m -> m.setTimestamp(name, value, cal) })
+    }
+    fun setTimestamp(name:String, value:ZonedDateTime) {
+        _nameList.add(name)
+        val instant = value.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime().toInstant(ZoneOffset.UTC)
+        val date = Date.from(instant)
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        _setList.add({ m -> m.setTimestamp(name, date, cal) })
+    }
+    fun setTimestamp(name:String, value:LocalDateTime) {
+        _nameList.add(name)
+        val zdt = value.atZone(ZoneId.systemDefault())
+        val date = Date.from(zdt.toInstant())
+        _setList.add({ m -> m.setTimestamp(name, date) })
     }
     fun setTimestamp(name:String, value:Timestamp) {
         _nameList.add(name)
