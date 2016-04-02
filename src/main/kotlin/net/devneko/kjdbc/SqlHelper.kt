@@ -19,6 +19,25 @@ open class SqlHelper
         return ResultSetWrapper(ps, ps.executeQuery())
     }
 
+    fun count(tableName:String, whereClause:String, block:(ParameterMapper.()->Unit)? = null):Int {
+        val sql = "SELECT COUNT(*) as cnt FROM `$tableName` WHERE $whereClause"
+        val analyzeResult = SqlAnalyzer.analyze(sql)
+        val ps = connection.prepareStatement(analyzeResult.sql)
+        val mapper = ParameterMapper(analyzeResult.nameIndex, ps)
+        block?.let {
+            mapper.it()
+        }
+        val rs = ResultSetWrapper(ps, ps.executeQuery())
+        var result:Int = 0
+        try {
+            rs.next()
+            result = rs.get("cnt")
+        } finally {
+            rs.close()
+        }
+        return result
+    }
+
     fun insert(tableName:String, block:UpdateParameterBuilder.()->Unit):Int {
         val builder = UpdateParameterBuilder()
         builder.block()
