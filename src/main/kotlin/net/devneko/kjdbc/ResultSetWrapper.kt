@@ -18,6 +18,15 @@ class ResultSetWrapper(
         private val resultSet: ResultSet
 ) : ResultSet by resultSet, Closeable
 {
+
+    fun forEach(callback:ResultSetWrapper.()->Unit) {
+        use {
+            while (this.next()) {
+                this.callback()
+            }
+        }
+    }
+
     fun <T:Any> forEach(clazz: KClass<T>, callback:(T)->Unit) {
         use {
             while ( this.next() ) {
@@ -25,6 +34,16 @@ class ResultSetWrapper(
                 callback.invoke(obj)
             }
         }
+    }
+
+    fun <T:Any> map(callback:ResultSetWrapper.()->T):List<T> {
+        val result = arrayListOf<T>()
+        use {
+            while (this.next()) {
+                result.add(this.callback())
+            }
+        }
+        return result
     }
 
     inline fun <reified T:Any> readAll():List<T> {

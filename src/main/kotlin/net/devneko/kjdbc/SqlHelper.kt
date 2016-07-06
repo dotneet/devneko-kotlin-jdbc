@@ -68,18 +68,17 @@ open class SqlHelper
         return updateSql(sql, block)
     }
 
-    fun prepare(sql:String, block: ParameterMapper.()->Unit):PreparedStatement {
+    fun prepare(sql:String):SmartPreparedStatement {
         val analyzeResult = SqlAnalyzer.analyze(sql)
         val ps = connection.prepareStatement(analyzeResult.sql)
         val mapper = ParameterMapper(analyzeResult.nameIndex, ps)
-        mapper.block()
-        return ps
+        return SmartPreparedStatement(mapper)
     }
 
     fun updateSql(sql:String, block: ParameterMapper.()->Unit):Int {
-        val ps = prepare(sql, block)
+        val ps = prepare(sql)
         try {
-            return ps.executeUpdate()
+            return ps.executeUpdate(block)
         } finally {
             ps.close()
         }
