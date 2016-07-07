@@ -81,7 +81,7 @@ class ResultSetWrapper(
             val camelCaseName = underscoreSeparatedStringToCamelCase(columnName)
 
             constructor.parameters.forEach params@ {
-                if ( camelCaseName.equals(it.name) ) {
+                if ( columnName.equals(it.name) || camelCaseName.equals(it.name) ) {
                     val v = getByType(columnName,it.type.javaType)
                     values.put(it, v)
                     return@params
@@ -99,16 +99,23 @@ class ResultSetWrapper(
 
     fun getByType(name:String, type: Type):Any? {
         when ( type.typeName ) {
+            "long" -> return this.getLong(name)
             "java.lang.Long" -> return this.getLong(name)
+            "int" -> return this.getInt(name)
             "java.lang.Integer" -> return this.getInt(name)
+            "short" -> return this.getShort(name)
             "java.lang.Short" -> return this.getShort(name)
+            "byte" -> return this.getByte(name)
             "java.lang.Byte" -> return this.getByte(name)
+            "float" -> return this.getFloat(name)
             "java.lang.Float" -> return this.getFloat(name)
+            "double" -> return this.getDouble(name)
             "java.lang.Double" -> return this.getDouble(name)
             "java.lang.String" -> return this.getString(name)
-            "java.lang.Boolean" -> this.getBoolean(name)
-            "kotlin.ByteArray" -> this.getBytes(name)
-            "java.net.URL" -> this.getURL(name)
+            "boolean" -> return this.getBoolean(name)
+            "java.lang.Boolean" -> return this.getBoolean(name)
+            "kotlin.ByteArray" -> return this.getBytes(name)
+            "java.net.URL" -> return this.getURL(name)
             "java.math.BigDecimal" -> return this.getBigDecimal(name)
             "java.util.Date" -> return Date(this.getDate(name).time)
             "java.time.ZonedDateTime" -> {
@@ -119,8 +126,8 @@ class ResultSetWrapper(
                 val ts = this.getTimestamp(name)
                 return ts.toLocalDateTime().atZone(ZoneId.systemDefault()).toLocalDateTime()
             }
-            "java.sql.Blob" -> this.getBlob(name)
-            "java.sql.Clob" -> this.getClob(name)
+            "java.sql.Blob" -> return this.getBlob(name)
+            "java.sql.Clob" -> return this.getClob(name)
         }
         return this.getObject(name)
     }
