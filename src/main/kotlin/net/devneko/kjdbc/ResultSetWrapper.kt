@@ -82,8 +82,32 @@ class ResultSetWrapper(
 
             constructor.parameters.forEach params@ {
                 if ( columnName.equals(it.name) || camelCaseName.equals(it.name) ) {
-                    val v = getByType(columnName,it.type.javaType)
-                    values.put(it, v)
+                    val jClass = it.type.javaClass
+                    if ( jClass.isEnum ) {
+                        val ann = jClass.getDeclaredAnnotation(EnumMappingField::class.java)
+                        val dbValue = ann?.let {
+                            when (ann.type) {
+                                EnumMappingFieldType.INT ->
+                                    getByType(columnName, Int.javaClass)
+                                EnumMappingFieldType.LONG ->
+                                    getByType(columnName, Long.javaClass)
+                                EnumMappingFieldType.STRING ->
+                                    getByType(columnName, String.javaClass)
+                            }
+                        }
+                        val valuesMethod = it.type.javaClass.getDeclaredMethod("values")
+                        val list = valuesMethod.invoke(null, null) as List<Any>
+                        list.forEach { enumValue ->
+                            val field = enumValue.javaClass.getDeclaredField(ann.fieldName)
+                            val enumRawValue = field.get(enumValue)
+                            if ( enumRawValue == dbValue ) {
+                                values.put(it, enumValue)
+                            }
+                        }
+                    } else {
+                        val v = getByType(columnName,it.type.javaType)
+                        values.put(it, v)
+                    }
                     return@params
                 }
             }
