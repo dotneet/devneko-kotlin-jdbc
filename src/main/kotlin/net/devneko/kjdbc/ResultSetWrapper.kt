@@ -82,10 +82,11 @@ class ResultSetWrapper(
 
             constructor.parameters.forEach params@ {
                 if ( columnName.equals(it.name) || camelCaseName.equals(it.name) ) {
-                    val jClass = it.type.javaClass
-                    if ( jClass.isEnum ) {
-                        val ann = jClass.getDeclaredAnnotation(EnumMappingField::class.java)
-                        val dbValue = ann?.let {
+                    val clazz = classForName(it.type.javaType.typeName)
+                    val annOrNull = clazz?.getDeclaredAnnotation(EnumMappingField::class.java) ?: null
+                    annOrNull?.let { ann ->
+                        clazz ?: throw IllegalStateException()
+                        val dbValue =
                             when (ann.type) {
                                 EnumMappingFieldType.INT ->
                                     getByType(columnName, Int.javaClass)
@@ -94,17 +95,17 @@ class ResultSetWrapper(
                                 EnumMappingFieldType.STRING ->
                                     getByType(columnName, String.javaClass)
                             }
-                        }
-                        val valuesMethod = it.type.javaClass.getDeclaredMethod("values")
-                        val list = valuesMethod.invoke(null, null) as List<Any>
+                        val valuesMethod = clazz.getDeclaredMethod("values")
+                        val list = valuesMethod.invoke(null) as Array<Any>
                         list.forEach { enumValue ->
                             val field = enumValue.javaClass.getDeclaredField(ann.fieldName)
+                            field.isAccessible = true
                             val enumRawValue = field.get(enumValue)
                             if ( enumRawValue == dbValue ) {
                                 values.put(it, enumValue)
                             }
                         }
-                    } else {
+                    } ?: run {
                         val v = getByType(columnName,it.type.javaType)
                         values.put(it, v)
                     }
@@ -114,6 +115,20 @@ class ResultSetWrapper(
         }
 
         return constructor.callBy(values)
+    }
+
+    private val classCache = hashMapOf<String,Class<*>?>()
+    private fun classForName(name:String):Class<*>? {
+        if ( classCache.keys.contains(name) ) {
+            return classCache[name]
+        }
+        val clazz = try {
+            Class.forName(name)
+        } catch (e:ClassNotFoundException) {
+            null
+        }
+        classCache[name] = clazz
+        return clazz
     }
 
     inline fun <reified T:Any> get(name:String):T {
