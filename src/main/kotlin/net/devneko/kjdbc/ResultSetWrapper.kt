@@ -159,11 +159,11 @@ class ResultSetWrapper(
             "java.util.Date" -> return Date(this.getDate(name).time)
             "java.time.ZonedDateTime" -> {
                 val ts = this.getTimestamp(name)
-                return ts.toInstant().atZone(ZoneId.systemDefault())
+                return ts?.let { it.toInstant().atZone(ZoneId.systemDefault()) } ?: null
             }
             "java.time.LocalDateTime" -> {
                 val ts = this.getTimestamp(name)
-                return ts.toLocalDateTime().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                return ts?.let { it.toLocalDateTime().atZone(ZoneId.systemDefault()).toLocalDateTime() } ?: null
             }
             "java.sql.Blob" -> return this.getBlob(name)
             "java.sql.Clob" -> return this.getClob(name)
