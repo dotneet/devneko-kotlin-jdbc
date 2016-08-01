@@ -7,6 +7,8 @@ import java.net.URL
 import java.sql.*
 import java.sql.Array
 import java.sql.Date
+import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.*
 
 class ParameterMapper
@@ -108,8 +110,16 @@ class ParameterMapper
     fun set(name:String, value: Date, cal: Calendar) {
         statement.setDate(getIndex(name), value, cal)
     }
+    fun set(name:String, value: Instant) {
+        val date = java.sql.Date(java.util.Date.from(value).time)
+        statement.setDate(getIndex(name), date)
+    }
     fun set(name:String, value: java.util.Date) {
         val date = Date(value.time)
+        statement.setDate(getIndex(name), date)
+    }
+    fun set(name:String, value: ZonedDateTime) {
+        val date = Date(java.util.Date.from(value.toInstant()).time)
         statement.setDate(getIndex(name), date)
     }
     fun set(name:String, value: Double) {
@@ -189,6 +199,12 @@ class ParameterMapper
     }
     fun setTimestamp(name:String, value: Timestamp) {
         statement.setTimestamp(getIndex(name), value)
+    }
+    fun setTimestamp(name:String, value: ZonedDateTime) {
+        statement.setTimestamp(getIndex(name), Timestamp.from(value.toInstant()))
+    }
+    fun setTimestamp(name:String, value: Instant) {
+        statement.setTimestamp(getIndex(name), Timestamp.from(value))
     }
     fun setTimestamp(name:String, value: Timestamp, cal: Calendar) {
         statement.setTimestamp(getIndex(name), value, cal)
