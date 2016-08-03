@@ -1,8 +1,6 @@
 package net.devneko.kjdbc
 
-import net.devneko.kjdbc.*
 import java.sql.Connection
-import java.sql.PreparedStatement
 
 open class SqlHelper
 (
@@ -28,14 +26,12 @@ open class SqlHelper
             mapper.it()
         }
         val rs = ResultSetWrapper(ps, ps.executeQuery())
-        var result:Int = 0
         try {
             rs.next()
-            result = rs.get("cnt")
+            return rs.get("cnt")
         } finally {
             rs.close()
         }
-        return result
     }
 
     fun insert(tableName:String, block:UpdateParameterBuilder.()->Unit):Int {

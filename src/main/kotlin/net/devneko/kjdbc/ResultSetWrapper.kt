@@ -82,20 +82,20 @@ class ResultSetWrapper(
 
             constructor.parameters.forEach params@ {
                 if ( columnName.equals(it.name) || camelCaseName.equals(it.name) ) {
-                    val clazz = classForName(it.type.javaType.typeName)
-                    val annOrNull = clazz?.getDeclaredAnnotation(EnumMappingField::class.java) ?: null
+                    val cls = classForName(it.type.javaType.typeName)
+                    val annOrNull = cls?.getDeclaredAnnotation(EnumMappingField::class.java) ?: null
                     annOrNull?.let { ann ->
-                        clazz ?: throw IllegalStateException()
+                        cls ?: throw IllegalStateException()
                         val dbValue =
                             when (ann.type) {
                                 EnumMappingFieldType.INT ->
-                                    getByType(columnName, Int.javaClass)
+                                    getByType(columnName, Int::class.java)
                                 EnumMappingFieldType.LONG ->
-                                    getByType(columnName, Long.javaClass)
+                                    getByType(columnName, Long::class.java)
                                 EnumMappingFieldType.STRING ->
-                                    getByType(columnName, String.javaClass)
+                                    getByType(columnName, String::class.java)
                             }
-                        val valuesMethod = clazz.getDeclaredMethod("values")
+                        val valuesMethod = cls.getDeclaredMethod("values")
                         val list = valuesMethod.invoke(null) as Array<Any>
                         list.forEach { enumValue ->
                             val field = enumValue.javaClass.getDeclaredField(ann.fieldName)
