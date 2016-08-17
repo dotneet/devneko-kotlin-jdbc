@@ -46,6 +46,11 @@ class ResultSetWrapper(
         return result
     }
 
+    fun <T:Any> next(callback:ResultSetWrapper.()->T):T {
+        this.next()
+        return this.callback()
+    }
+
     inline fun <reified T:Any> readAll():List<T> {
         val result = arrayListOf<T>()
         use {
