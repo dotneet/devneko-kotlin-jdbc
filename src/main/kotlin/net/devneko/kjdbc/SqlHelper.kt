@@ -80,4 +80,16 @@ open class SqlHelper
         }
     }
 
+    /**
+     * generate placeholder string for "in clause".
+     *
+     * for example.
+     * placeholdersForIn(arrayOf("a", "b"), "id) return "(:id1, :id2, :id3
+     */
+    fun placeholdersForIn(values:List<Any>, prefix:String):String {
+        if ( values.size == 0 ) {
+            throw IllegalArgumentException("values size must be greater than zero.")
+        }
+        return "(" + (0..(values.size-1)).map { ":${prefix}${it}" }.joinToString(",") + ")"
+    }
 }
