@@ -92,4 +92,12 @@ open class SqlHelper
         }
         return "(" + (0..(values.size-1)).map { ":${prefix}${it}" }.joinToString(",") + ")"
     }
+
+    fun lastInsertId():Int {
+        return query("SELECT LAST_INSERT_ID()").let {
+            val result = it.map { getInt(1) }.first()
+            it.close()
+            result
+        }
+    }
 }
