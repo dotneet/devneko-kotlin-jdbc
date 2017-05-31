@@ -1,7 +1,7 @@
 # devneko-kotlin-jdbc(kjdbc)
 
-kjdbc is a simple helper library for JDBC.
-kjdbc makes easier to compose SQL statement by Kotlin's excellent syntax.
+kjdbc is a simple helper library for JDBC.  s
+kjdbc makes easier to handle a database by Kotlin's excellent syntax.
 
 ## Features
 
