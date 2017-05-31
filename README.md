@@ -1,15 +1,15 @@
-#devneko-kotlin-jdbc(kjdbc)
+# devneko-kotlin-jdbc(kjdbc)
 
-kjdbcはKotlinのためのシンプルなJDBCヘルパーです。  
-Kotlinの強力なシンタックスを活用してJDBCをより簡単に扱えます。
+kjdbc is a simple helper library for JDBC.
+kjdbc makes easier to compose SQL statement by Kotlin's excellent syntax.
 
-##機能
+## Features
 
- - 名前付きプレースホルダー
- - StatementやResultSetに対するシンプルなパラメータ設定/取得
- - レコードのデータクラスへのマッピング
+ - Named Placeholder
+ - Simple notation for setting parameters to Statement or ResultSet
+ - Mapping to data class
 
-##コード例
+## Example
 
 ```kotlin
 data class Post(
@@ -43,7 +43,7 @@ helper.query("SELECT * FROM post WHERE id = :id") {
   }
 }
 
-// または
+// Or
 // while ( rs.next() ) {
 //   val post:Post = rs.readOne()
 //   println(post)
