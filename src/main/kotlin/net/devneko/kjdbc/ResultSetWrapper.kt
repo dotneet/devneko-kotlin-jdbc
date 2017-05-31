@@ -187,7 +187,7 @@ class ResultSetWrapper(
     }
 
     fun underscoreSeparatedStringToCamelCase(str:String):String {
-        return Regex("_([a-z])").replace(str, { r ->
+        return Regex("_([a-z])").replace(str.toLowerCase(), { r ->
             val g = r.groups[1]
             g?.value?.capitalize() ?: ""
         })
